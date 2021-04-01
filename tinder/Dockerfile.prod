@@ -21,7 +21,7 @@ FROM python:3.8.3-alpine
 
 RUN mkdir -p /home/tinder
 
-RUN addgroup -S app && adduser -S app -G app
+RUN addgroup -S group && adduser -S user -G group
 
 ENV HOME=/home/tinder
 ENV APP_HOME=/home/tinder/web
@@ -39,8 +39,8 @@ COPY ./entrypoint.prod.sh $APP_HOME
 
 COPY . $APP_HOME
 
-RUN chown -R app:app $APP_HOME
+RUN chown -R user:group $APP_HOME
 
-USER app
+USER user
 
 ENTRYPOINT ["/home/tinder/web/entrypoint.prod.sh"]
