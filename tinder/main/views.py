@@ -1,5 +1,4 @@
 import geoip2.database
-from django.contrib.auth import get_user_model
 
 from django.db import IntegrityError
 from django.db.models import Q
@@ -36,7 +35,6 @@ class RegistrationView(APIView):
     """APIView для регистрации пользователя"""
 
     def post(self, request):
-
         serializer = RegistrationSerializer(data=request.data)
         if serializer.is_valid():
             if serializer.data['password'] == serializer.data['repeat_password']:
@@ -94,9 +92,6 @@ class LikeApiView(UpdateModelMixin,
         # get permission to send message
         if request.user in Like.objects.get(user_id=pk).likes.all():
             data.data.update({'can_message': True})
-
-        # reader = geoip2.database.Reader('./GeoLite2-Country_20210330/GeoLite2-Country.mmdb')
-        # response = reader.country('192.168.1.33')
         return data
 
 
@@ -148,7 +143,13 @@ class NewsApiView(APIView):
         k = Location.objects.get(user=request.user)
         # getting radius from subscription
         radius = k.user.subscriber_user.radius
-        # checking count swipes
+        # checking count swipes and last update
+        current_date = timezone.now()
+        if k.user.subscriber_user.update_swipes.day != current_date.day:
+            k.user.subscriber_user.swipes = ''
+            k.user.subscriber_user.update_swipes = current_date
+            k.user.subscriber_user.save()
+            # its will be looking good with using celery
         swipes = k.user.subscriber_user.swipes.split(',')
         if len(swipes) >= k.user.subscriber_user.swipes_count or k.user.subscriber_user.swipes_count == 0:
             return Response(

@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.utils import timezone
 
 
 class Post(models.Model):
@@ -42,6 +43,7 @@ class Subscription(models.Model):
     radius = models.IntegerField(verbose_name='Радиус')
     swipes_count = models.IntegerField(verbose_name='Кол-во свайпов')
     swipes = models.TextField(verbose_name='Свайпы', default='', null=True, blank=True)
+    update_swipes = models.DateField(verbose_name='Обновление свайпов', default=timezone.now)
 
     def __str__(self):
         return f'id: {self.pk}, user: {self.user.username}, radius: {self.radius}'
