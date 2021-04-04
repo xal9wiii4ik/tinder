@@ -1,12 +1,12 @@
-FROM python:3.8.3-alpine as builder
+FROM python:3.8.3 as builder
 
 WORKDIR /usr/src/tinder
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-RUN apk update \
-    && apk add postgresql-dev gcc python3-dev musl-dev jpeg-dev zlib-dev
+RUN apt-get update
+RUN apt-get upgrade -y && apt-get -y install postgresql gcc python3-dev musl-dev
 
 RUN pip install --upgrade pip
 RUN pip install flake8
@@ -14,14 +14,18 @@ COPY . .
 RUN flake8 --ignore=E501,F401 .
 
 COPY ./requirements.txt .
+RUN pip install Pillow
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/tinder/wheels -r requirements.txt
 
 
-FROM python:3.8.3-alpine
+FROM python:3.8.3
 
 RUN mkdir -p /home/tinder
 
-RUN addgroup -S group && adduser -S user -G group
+RUN groupadd group
+RUN useradd -m -g group user -p PASSWORD
+RUN usermod -aG group user
+
 
 ENV HOME=/home/tinder
 ENV APP_HOME=/home/tinder/web
@@ -30,7 +34,9 @@ RUN mkdir $APP_HOME/staticfiles
 RUN mkdir $APP_HOME/mediafiles
 WORKDIR $APP_HOME
 
-RUN apk update && apk add libpq
+RUN apt-get update \
+    && apt-get install -y netcat
+
 COPY --from=builder /usr/src/tinder/wheels /wheels
 COPY --from=builder /usr/src/tinder/requirements.txt .
 RUN pip install --no-cache /wheels/*

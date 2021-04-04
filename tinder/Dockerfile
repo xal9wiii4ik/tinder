@@ -6,9 +6,11 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 RUN apk update \
-    && apk add postgresql-dev gcc python3-dev musl-dev jpeg-dev zlib-dev
+    && apk add postgresql-dev gcc python3-dev musl-dev jpeg-dev zlib-dev libjpeg \
+    libwebp openjpeg-dev libimagequant-dev
 
 RUN pip install --upgrade pip
+RUN pip install Pillow
 COPY ./requirements.txt .
 RUN pip install -r requirements.txt
 

@@ -12,5 +12,6 @@ then
 fi
 
 python manage.py test
+pip install Pillow
 
 exec "$@"
