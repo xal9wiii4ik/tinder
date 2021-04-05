@@ -12,7 +12,7 @@ from main.views import (
     NewsApiView,
     LocationApiView,
     RegistrationView,
-    SubscriberApiView,
+    SubscriptionViewSet,
 )
 from tinder import settings
 
@@ -20,6 +20,7 @@ router = SimpleRouter()
 router.register(r'post', PostModelViewSet)
 router.register(r'like', LikeApiView)
 router.register(r'location', LocationApiView)
+router.register(r'subscription', SubscriptionViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,7 +28,6 @@ urlpatterns = [
     path('token/', TokenObtainPairView.as_view(), name='token'),
     path('registration/', RegistrationView.as_view(), name='registration'),
 
-    path('subscription/', SubscriberApiView.as_view(), name='subscription'),
     path('news/', NewsApiView.as_view(), name='news')
 
 ] + router.urls

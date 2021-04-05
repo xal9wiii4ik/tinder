@@ -1,4 +1,6 @@
 /.env.prod
 /.env.dev
 /.env.db
+/.env.prod.db
 /venv/
+/.idea/

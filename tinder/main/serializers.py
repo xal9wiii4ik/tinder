@@ -1,11 +1,16 @@
+from django.contrib.auth import password_validation
 from rest_framework import serializers
 
-from main.models import Post, Like, Location
-from main.services_serializers import verification_password
+from main.models import (
+    Post,
+    Like,
+    Location,
+    Subscription,
+)
 
 
 class RegistrationSerializer(serializers.Serializer):
-    """Сериализатор для регистрации пользователя"""
+    """ Serializer for registration users """
 
     username = serializers.CharField(max_length=60, required=True)
     password = serializers.CharField(max_length=60, required=True)
@@ -13,9 +18,17 @@ class RegistrationSerializer(serializers.Serializer):
     repeat_password = serializers.CharField(max_length=60, required=True)
 
     def validate_password(self, value: str) -> str:
-        """Password validation"""
+        """ Password validation using django validation """
 
-        return verification_password(value=value)
+        password_validation.validate_password(password=value)
+        return value
+
+    def validate(self, attrs):
+        data = super(RegistrationSerializer, self).validate(attrs)
+        if data['password'] != data['repeat_password']:
+            raise serializers.ValidationError({'password': 'Password and repeat password is not equal'})
+        else:
+            return data
 
 
 class PostModelSerializer(serializers.ModelSerializer):
@@ -23,6 +36,14 @@ class PostModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
+        fields = '__all__'
+
+
+class SubscriptionModelSerializer(serializers.ModelSerializer):
+    """ Serializer for model subscription """
+
+    class Meta:
+        model = Subscription
         fields = '__all__'
 
 

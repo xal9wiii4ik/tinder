@@ -6,7 +6,7 @@ from rest_framework.test import APITestCase
 
 from django.contrib.auth import get_user_model
 
-from main.models import Location, Subscription, Post, Like
+from main.models import Location, Subscription, Post, Like, Swipe
 
 
 class AuthTestCase(APITestCase):
@@ -20,8 +20,8 @@ class AuthTestCase(APITestCase):
         url = reverse('registration')
         data = {
             'username': 'user_1',
-            'password': '1Password',
-            'repeat_password': '1Password',
+            'password': '12345678as',
+            'repeat_password': '12345678as',
             'point': '110'
         }
         json_data = json.dumps(data)
@@ -183,7 +183,7 @@ class LikesTestCase(APITestCase):
         self.assertEqual(first=0, second=self.like.likes.all().count())
         url = reverse('like-detail', args=(self.like.id,))
         data = {
-            'likes': [5]
+            'likes': [2]
         }
         json_data = json.dumps(data)
         self.client.credentials(HTTP_AUTHORIZATION=self.token)
@@ -228,13 +228,15 @@ class SubscriptionTestCase(APITestCase):
         """ updating subscription to premium """
 
         self.assertEqual(first=10, second=self.subscription.radius)
-        url = reverse('subscription')
+        url = reverse('subscription-detail', args=(self.subscription.id,))
         data = {
             'type': 'premium',
+            'radius': 30,
+            'swipes_count': 0
         }
         json_data = json.dumps(data)
         self.client.credentials(HTTP_AUTHORIZATION=self.token)
-        response = self.client.post(path=url, content_type='application/json', data=json_data)
+        response = self.client.patch(path=url, content_type='application/json', data=json_data)
         self.subscription.refresh_from_db()
         self.assertEqual(first=200, second=response.status_code)
         self.assertEqual(first=30, second=self.subscription.radius)
@@ -331,6 +333,8 @@ class NewsTestCase(APITestCase):
         self.location_2 = Location.objects.create(user=self.user_2, point=100)
         self.subscription = Subscription.objects.create(user=self.user, type='base', radius=10, swipes_count=20)
         self.subscription_2 = Subscription.objects.create(user=self.user_2, type='base', radius=10, swipes_count=1)
+        self.swipes_users = Swipe.objects.create(user=self.user)
+        self.swipes_users_2 = Swipe.objects.create(user=self.user_2)
 
     def test_get_200(self):
         """ getting news 200 """
@@ -340,7 +344,7 @@ class NewsTestCase(APITestCase):
         response = self.client.get(path=url)
         self.assertEqual(first=200, second=response.status_code)
         self.subscription.refresh_from_db()
-        self.assertEqual(first='4,', second=self.subscription.swipes)
+        self.assertEqual(first=1, second=self.swipes_users.swipes.all().count())
 
     def test_get_400(self):
         """ getting news 400 """

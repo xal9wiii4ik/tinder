@@ -11,6 +11,9 @@ then
     echo "PostgreSQL started"
 fi
 
+pip install --upgrade pip
+pip install Pillow
+pip install -r requirements.txt
 python manage.py flush --no-input
 python manage.py migrate
 python manage.py test

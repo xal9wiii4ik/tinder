@@ -1,6 +1,19 @@
 from django.contrib import admin
 
-from main.models import Post, Like, Location, Subscription
+from main.models import (
+    Post,
+    Like,
+    Location,
+    Subscription,
+    Swipe,
+)
+
+
+@admin.register(Swipe)
+class SwipeModelAdmin(admin.ModelAdmin):
+    """ Display model Swipes on admin panel """
+
+    pass
 
 
 @admin.register(Subscription)
