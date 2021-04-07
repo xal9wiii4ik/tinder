@@ -1,6 +1,6 @@
 # Simple tinder app 
 with Postgres, Gunicorn, Nginx docker. This application looks like tinder which can send peoples in dependence of your subscribe(without front)
-with testing which cover all functions
+with testing which cover all functions. Custom auth with chips of simple-jwt
 
 # Steps of start this applicaiton:
 1) add .env.dev; .env.prod; .env.db; .env.prod.db to source root
