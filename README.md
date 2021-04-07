@@ -14,7 +14,7 @@ If in production run this command in console:
 
 
 # main libraries:
-1) Postgres
+1) psycopg2
 2) Gunicorn
 3) djangorestframework
 4) djangorestframework-simplejwt
