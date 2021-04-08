@@ -19,5 +19,6 @@ If in production run this command in console:
 3) djangorestframework
 4) djangorestframework-simplejwt
 
+# Database PostgreSQL
 
 # date the code was written: 06.04.2021
